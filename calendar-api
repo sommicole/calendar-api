@@ -5,11 +5,11 @@ import os
 
 app = Flask(__name__)
 
-# Microsoft Graph credentials
-CLIENT_ID = '3776da3b-8051-48c7-8f1d-88ace0840be3'
-CLIENT_SECRET = 'yEa8Q~AwSDepj4vM~LkrqDItdW9bjS0BbLQ4-cYg'
-TENANT_ID = '50648dfc-8de9-4592-bdb6-e743c0757b08'
-EMAIL = 'colesommi@lcbcchurch.com'
+# Microsoft Graph credentials (secured via environment variables)
+CLIENT_ID = os.environ.get('CLIENT_ID')
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+TENANT_ID = os.environ.get('TENANT_ID')
+EMAIL = os.environ.get('EMAIL')
 
 AUTHORITY = f"https://login.microsoftonline.com/{TENANT_ID}"
 SCOPE = ["https://graph.microsoft.com/.default"]
