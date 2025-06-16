@@ -22,13 +22,17 @@ def create_event():
     end_time = data.get('end_time')
     location = data.get('location', '')
 
+    # Acquire token
     app_auth = ConfidentialClientApplication(
         client_id=CLIENT_ID,
         client_credential=CLIENT_SECRET,
         authority=AUTHORITY
     )
     token_response = app_auth.acquire_token_for_client(scopes=SCOPE)
-    access_token = token_response['access_token']
+    access_token = token_response.get('access_token')
+
+    if not access_token:
+        return jsonify({"error": "Failed to obtain access token", "details": token_response}), 401
 
     headers = {
         'Authorization': f'Bearer {access_token}',
@@ -37,12 +41,20 @@ def create_event():
 
     event = {
         "subject": subject,
-        "start": {"dateTime": start_time, "timeZone": "Eastern Standard Time"},
-        "end": {"dateTime": end_time, "timeZone": "Eastern Standard Time"},
-        "location": {"displayName": location}
+        "start": {
+            "dateTime": start_time,
+            "timeZone": "Eastern Standard Time"
+        },
+        "end": {
+            "dateTime": end_time,
+            "timeZone": "Eastern Standard Time"
+        },
+        "location": {
+            "displayName": location
+        }
     }
 
-    url = f"https://graph.microsoft.com/v1.0/me/events"
+    url = f"https://graph.microsoft.com/v1.0/users/{EMAIL}/events"
     response = requests.post(url, headers=headers, json=event)
 
     return jsonify({
